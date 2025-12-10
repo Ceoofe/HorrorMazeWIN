@@ -8,12 +8,16 @@ public class PlayerController : MonoBehaviour
 
     public float speed;
     float highSpeed;
+    float stamina = 100;
 
     GameObject cinema;
     GameObject flashLight;
+    GameObject barrier;
     Transform mainCam;
     Rigidbody rb;
 
+    AudioSource audioSource;
+    public AudioClip[] clips; // WIP need to change clips to different ones 
     public static bool isCinemaMode = true;
     bool lowFuel = false;
     bool noFuel = false;
@@ -26,10 +30,12 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
         StartCoroutine("NoFuel");
         cinema = GameObject.Find("Canvas/Cinema");
         mainCam = transform.Find("Main Camera");
-        flashLight = transform.Find("Main Camera/Spot Light").gameObject;
+        flashLight = transform.Find("Main Camera/Flashlight").gameObject;
+        barrier = GameObject.Find("Barrier"); // Barrier for the player to not fall off the map or roaming around somewhere else
         highSpeed = Mathf.Pow(speed, 3);
     }
 
@@ -57,11 +63,56 @@ public class PlayerController : MonoBehaviour
             {
                 flashLight.SetActive(true);
                 isOn = true;
+
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(clips[2]);
+                }
+            }
+        }
+
+        if (isSprinting) // Stamina
+        {
+            stamina -= 20 * Time.deltaTime;
+            if(stamina <= 0)
+            {
+                stamina = 0;
+                speed = 3;
+                isSprinting = false;
+            }
+        }
+        else
+        {
+            stamina += 10 * Time.deltaTime;
+            if (stamina >= 100)
+            {
+                stamina = 100;
             }
         }
     }
 
     void FixedUpdate() // Movement
+    {
+        IsCinemaMode();
+        Movement();
+    }
+
+    IEnumerator NoFuel()
+    {
+        yield return new WaitForSeconds(5f);
+        barrier.gameObject.SetActive(false);
+        lowFuel = true;
+        yield return new WaitForSeconds(18f);
+        noFuel = true;
+        yield return new WaitForSeconds(1f);
+        rotateCam = true;
+        yield return new WaitForSeconds(.5f);
+        barrier.gameObject.SetActive(true);
+        isCinemaMode = false;
+        cinema.SetActive(false);
+    }
+
+    void IsCinemaMode()
     {
         if (isCinemaMode) // No movement
         {
@@ -82,28 +133,26 @@ public class PlayerController : MonoBehaviour
             }
             if (rotateCam)
             {
-                mainCam.Rotate(0,0,0.1f, Space.World); // Right slant camera
+                mainCam.Rotate(0, 0, 0.1f, Space.World); // Right slant camera
             }
             return;
         }
-
+    }
+    void Movement()
+    {
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
 
         transform.Translate(Vector3.right * hor * speed * Time.deltaTime);
         transform.Translate(Vector3.forward * ver * speed * Time.deltaTime);
-    }
 
-    IEnumerator NoFuel()
-    {
-        yield return new WaitForSeconds(5f);
-        lowFuel = true;
-        yield return new WaitForSeconds(18f);
-        noFuel = true;
-        yield return new WaitForSeconds(1f);
-        rotateCam = true;
-        yield return new WaitForSeconds(.5f);
-        isCinemaMode = false;
-        cinema.SetActive(false);
+        // Walking Sound
+        if (hor != 0 || ver != 0)
+        {
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(clips[1]);
+            }
+        }
     }
 }

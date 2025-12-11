@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,17 +9,20 @@ public class PlayerController : MonoBehaviour
 
     public float speed;
     float highSpeed;
-    float stamina = 100;
+    float stamina = 100f;
+    float timer;
+    readonly float waitTime = 0.05f;
 
     GameObject cinema;
     GameObject flashLight;
     GameObject barrier;
+    GameObject plrUI;
     Transform mainCam;
-    Rigidbody rb;
+    Slider staminaBar;
 
     AudioSource audioSource;
     public AudioClip[] clips; // WIP need to change clips to different ones 
-    public static bool isCinemaMode = true;
+    public static bool isCinemaMode = true; // False to skip cutescene
     bool lowFuel = false;
     bool noFuel = false;
     bool rotateCam = false;
@@ -29,75 +33,36 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        GameObject canvas = GameObject.Find("Canvas");
+
         audioSource = GetComponent<AudioSource>();
-        StartCoroutine("NoFuel");
-        cinema = GameObject.Find("Canvas/Cinema");
+        plrUI = canvas.transform.Find("PlayerUI").gameObject;
+        staminaBar = plrUI.transform.Find("StaminaBar").GetComponent<Slider>();
+
+        cinema = canvas.transform.Find("Cinema").gameObject;
         mainCam = transform.Find("Main Camera");
-        flashLight = transform.Find("Main Camera/Flashlight").gameObject;
+        flashLight = mainCam.Find("Flashlight").gameObject;
         barrier = GameObject.Find("Barrier"); // Barrier for the player to not fall off the map or roaming around somewhere else
+        
         highSpeed = Mathf.Pow(speed, 3);
+
+        StartCoroutine("NoFuel"); // Starts cutscene
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode) // Sprint
-        {
-            isSprinting = true;
-            speed = 6;
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift) && !isCinemaMode)
-        {
-            isSprinting = false;
-            speed = 3;
-        }
-        if (Input.GetKeyDown(KeyCode.F) && !isCinemaMode)
-        {
-            if (isOn)
-            {
-                flashLight.SetActive(false);
-                isOn = false;
-            }
-            else if (isOn == false)
-            {
-                flashLight.SetActive(true);
-                isOn = true;
-
-                if (!audioSource.isPlaying)
-                {
-                    audioSource.PlayOneShot(clips[2]);
-                }
-            }
-        }
-
-        if (isSprinting) // Stamina
-        {
-            stamina -= 20 * Time.deltaTime;
-            if(stamina <= 0)
-            {
-                stamina = 0;
-                speed = 3;
-                isSprinting = false;
-            }
-        }
-        else
-        {
-            stamina += 10 * Time.deltaTime;
-            if (stamina >= 100)
-            {
-                stamina = 100;
-            }
-        }
+        SprintLogic();
+        FlashlightLogic();
     }
 
-    void FixedUpdate() // Movement
+    void FixedUpdate()
     {
         IsCinemaMode();
-        Movement();
+        Movement(); // Movement
     }
 
-    IEnumerator NoFuel()
+    IEnumerator NoFuel() // Cutscene
     {
         yield return new WaitForSeconds(5f);
         barrier.gameObject.SetActive(false);
@@ -110,6 +75,7 @@ public class PlayerController : MonoBehaviour
         barrier.gameObject.SetActive(true);
         isCinemaMode = false;
         cinema.SetActive(false);
+        plrUI.SetActive(true);
     }
 
     void IsCinemaMode()
@@ -129,7 +95,7 @@ public class PlayerController : MonoBehaviour
                 {
                     highSpeed -= .9f * Time.deltaTime;
                 }
-                Debug.Log(highSpeed); // Remove speed by .5 every second
+                //Debug.Log(highSpeed); Remove speed by .5 every second
             }
             if (rotateCam)
             {
@@ -143,8 +109,8 @@ public class PlayerController : MonoBehaviour
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
 
-        transform.Translate(Vector3.right * hor * speed * Time.deltaTime);
-        transform.Translate(Vector3.forward * ver * speed * Time.deltaTime);
+        transform.Translate(Vector3.right * (hor * speed * Time.deltaTime));
+        transform.Translate(Vector3.forward * (ver * speed * Time.deltaTime));
 
         // Walking Sound
         if (hor != 0 || ver != 0)
@@ -152,6 +118,71 @@ public class PlayerController : MonoBehaviour
             if (!audioSource.isPlaying)
             {
                 audioSource.PlayOneShot(clips[1]);
+            }
+        }
+    }
+    void SprintLogic()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode) // Sprint
+        {
+            isSprinting = true;
+            speed = 6;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift) && !isCinemaMode)
+        {
+            isSprinting = false;
+            speed = 3;
+        }
+
+        // STAMINA LOGIC
+        if (isSprinting) // Decrease stamina when sprinting
+        {
+            timer += Time.deltaTime;
+            if (timer >= waitTime)
+            {
+                stamina--;
+                timer = 0;
+            }
+            if (stamina <= 0)
+            {
+                stamina = 0;
+                speed = 3;
+                isSprinting = false;
+            }
+        }
+        else // Increase stamina when not sprinting
+        {
+            timer += Time.deltaTime;
+            if (timer >= waitTime)
+            {
+                stamina++;
+                timer = 0;
+            }
+            if (stamina >= 100)
+            {
+                stamina = 100;
+            }
+        }
+        staminaBar.value = stamina; // Updates Stamina Bar UI
+    }
+    void FlashlightLogic()
+    {
+        if (Input.GetKeyDown(KeyCode.F) && !isCinemaMode)
+        {
+            if (isOn)
+            {
+                flashLight.SetActive(false);
+                isOn = false;
+            }
+            else if (isOn == false)
+            {
+                flashLight.SetActive(true);
+                isOn = true;
+
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(clips[2]);
+                }
             }
         }
     }

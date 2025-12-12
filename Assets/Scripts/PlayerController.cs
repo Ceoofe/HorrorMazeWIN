@@ -130,7 +130,9 @@ public class PlayerController : MonoBehaviour
     }
     void SprintLogic()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode) // Sprint
+        float hor = Input.GetAxis("Horizontal");
+        float ver = Input.GetAxis("Vertical");
+        if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode) // Sprint WIP sprints when player isnt moving
         {
             isSprinting = true;
             speed = 6;
@@ -148,6 +150,7 @@ public class PlayerController : MonoBehaviour
             if (timer >= waitTime)
             {
                 stamina--;
+                staminaBar.gameObject.SetActive(true);
                 timer = 0;
             }
             if (stamina <= 1)
@@ -168,6 +171,7 @@ public class PlayerController : MonoBehaviour
             if (stamina >= 100)
             {
                 stamina = 100;
+                staminaBar.gameObject.SetActive(false);
             }
         }
         staminaBar.value = stamina; // Updates Stamina Bar UI

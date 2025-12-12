@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,9 @@ public class PlayerController : MonoBehaviour
     public float speed;
     float highSpeed;
     float stamina = 100f;
+    float battery = 100f;
     float timer;
+    float flashTimer;
     readonly float waitTime = 0.05f;
 
     GameObject cinema;
@@ -19,6 +22,8 @@ public class PlayerController : MonoBehaviour
     GameObject plrUI;
     Transform mainCam;
     Slider staminaBar;
+    Slider flashlightBar;
+    TMP_Text batteryUI;
 
     AudioSource audioSource;
     public AudioClip[] clips; // WIP need to change clips to different ones 
@@ -38,6 +43,8 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         plrUI = canvas.transform.Find("PlayerUI").gameObject;
         staminaBar = plrUI.transform.Find("StaminaBar").GetComponent<Slider>();
+        flashlightBar = plrUI.transform.Find("FlashlightBar").GetComponent<Slider>();
+        batteryUI = flashlightBar.transform.Find("BatteryLevel").GetComponent<TMP_Text>();
 
         cinema = canvas.transform.Find("Cinema").gameObject;
         mainCam = transform.Find("Main Camera");
@@ -143,7 +150,7 @@ public class PlayerController : MonoBehaviour
                 stamina--;
                 timer = 0;
             }
-            if (stamina <= 0)
+            if (stamina <= 1)
             {
                 stamina = 0;
                 speed = 3;
@@ -183,6 +190,20 @@ public class PlayerController : MonoBehaviour
                 {
                     audioSource.PlayOneShot(clips[2]);
                 }
+            }
+        }
+        if (isOn == true)
+        {
+            flashTimer += Time.deltaTime;
+            if (flashTimer >= (waitTime*100)) // every 5 seconds
+            {
+                if (battery >= 1)
+                {
+                    battery--; // Decrease flashlight battery
+                }
+                batteryUI.text = battery.ToString() + "%";
+                flashlightBar.value = battery;
+                flashTimer = 0;
             }
         }
     }

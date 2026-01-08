@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     float flashTimer;
     readonly float waitTime = 0.05f;
 
+    GameObject really;
     GameObject cinema;
     GameObject flashLight;
     GameObject barrier;

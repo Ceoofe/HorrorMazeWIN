@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class MiniMenu : MonoBehaviour
 {
-
     GameObject menu;
     bool isOn;
     

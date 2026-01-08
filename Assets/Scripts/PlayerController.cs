@@ -65,8 +65,12 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isCinemaMode)
+        {
+            Movement(); // Movement
+            return;
+        }
         IsCinemaMode();
-        Movement(); // Movement
     }
 
     IEnumerator NoFuel() // Cutscene
@@ -87,29 +91,26 @@ public class PlayerController : MonoBehaviour
 
     void IsCinemaMode()
     {
-        if (isCinemaMode) // No movement
+        if (noFuel)
         {
-            if (noFuel)
-            {
-                transform.Translate(Vector3.forward * 10 * Time.deltaTime); // Forward
-                transform.Translate(Vector3.right * speed * Time.deltaTime); // Right
-            }
-            else
-            {
-                transform.Translate(Vector3.forward * highSpeed * Time.deltaTime); // Forward
-
-                if (lowFuel)
-                {
-                    highSpeed -= .9f * Time.deltaTime;
-                }
-                //Debug.Log(highSpeed); Remove speed by .5 every second
-            }
-            if (rotateCam)
-            {
-                mainCam.Rotate(0, 0, 0.1f, Space.World); // Right slant camera
-            }
-            return;
+            transform.Translate(Vector3.forward * 10 * Time.deltaTime); // Forward
+            transform.Translate(Vector3.right * speed * Time.deltaTime); // Right
         }
+        else
+        {
+            transform.Translate(Vector3.forward * highSpeed * Time.deltaTime); // Forward
+
+            if (lowFuel)
+            {
+                highSpeed -= .9f * Time.deltaTime;
+            }
+            //Debug.Log(highSpeed); Remove speed by .5 every second
+        }
+        if (rotateCam)
+        {
+            mainCam.Rotate(0, 0, 0.1f, Space.World); // Right slant camera
+        }
+        return;
     }
     void Movement()
     {

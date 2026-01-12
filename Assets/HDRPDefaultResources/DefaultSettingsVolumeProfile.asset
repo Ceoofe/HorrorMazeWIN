@@ -159,8 +159,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 1
   skyAmbientMode:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   fogType:
     m_OverrideState: 1
     m_Value: 0
@@ -186,10 +186,10 @@ MonoBehaviour:
     m_Value: 1
   colorMode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   color:
-    m_OverrideState: 0
-    m_Value: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    m_OverrideState: 1
+    m_Value: {r: 0.007843138, g: 0.007843138, b: 0.007843138, a: 1}
     hdr: 1
     showAlpha: 0
     showEyeDropper: 1

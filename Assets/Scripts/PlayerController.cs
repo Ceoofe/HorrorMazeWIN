@@ -39,6 +39,16 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Reset 
+        isCinemaMode = true;
+        lowFuel = false;
+        noFuel = false;
+        rotateCam = false;
+        isOn = false;
+        isSprinting = false;
+        stamina = 100f;
+        battery = 100f;
+
         GameObject canvas = GameObject.Find("Canvas");
 
         audioSource = GetComponent<AudioSource>();

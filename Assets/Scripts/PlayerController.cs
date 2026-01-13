@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
     float flashTimer;
     readonly float waitTime = 0.05f;
 
-    GameObject really;
     GameObject cinema;
     GameObject flashLight;
     GameObject barrier;
@@ -25,6 +24,7 @@ public class PlayerController : MonoBehaviour
     Slider staminaBar;
     Slider flashlightBar;
     TMP_Text batteryUI;
+    TMP_Text objectives;
 
     AudioSource audioSource;
     public AudioClip[] clips; // WIP need to change clips to different ones 
@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
         staminaBar = plrUI.transform.Find("StaminaBar").GetComponent<Slider>();
         flashlightBar = plrUI.transform.Find("FlashlightBar").GetComponent<Slider>();
         batteryUI = flashlightBar.transform.Find("BatteryLevel").GetComponent<TMP_Text>();
+        objectives = plrUI.transform.Find("ObjectiveUI/Objectives").GetComponent<TMP_Text>();
 
         cinema = canvas.transform.Find("Cinema").gameObject;
         mainCam = transform.Find("Main Camera");
@@ -82,6 +83,23 @@ public class PlayerController : MonoBehaviour
             return;
         }
         IsCinemaMode();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.name == "Trigger")
+        {
+            StartCoroutine(NewObjective(objectives, "• Enter the House"));
+        }
+    }
+
+    IEnumerator NewObjective(TMP_Text oldText, string newText)
+    {
+        oldText.text = "<s>" + oldText.text + "</s>";
+
+        yield return new WaitForSeconds(2f);
+
+        oldText.text = newText;
     }
 
     IEnumerator NoFuel() // Cutscene

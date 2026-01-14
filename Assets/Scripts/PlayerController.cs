@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour
     GameObject flashLight;
     GameObject barrier;
     GameObject plrUI;
+    GameObject interactionUI;
     Transform mainCam;
     Slider staminaBar;
     Slider flashlightBar;
@@ -34,6 +36,7 @@ public class PlayerController : MonoBehaviour
     bool rotateCam = false;
     bool isOn = false;
     bool isSprinting = false;
+    bool isNearMainDoor = false;
     
 
     // Start is called before the first frame update
@@ -57,6 +60,7 @@ public class PlayerController : MonoBehaviour
         flashlightBar = plrUI.transform.Find("FlashlightBar").GetComponent<Slider>();
         batteryUI = flashlightBar.transform.Find("BatteryLevel").GetComponent<TMP_Text>();
         objectives = plrUI.transform.Find("ObjectiveUI/Objectives").GetComponent<TMP_Text>();
+        interactionUI = plrUI.transform.Find("Indicator").gameObject;
 
         cinema = canvas.transform.Find("Cinema").gameObject;
         mainCam = transform.Find("Main Camera");
@@ -73,6 +77,7 @@ public class PlayerController : MonoBehaviour
     {
         SprintLogic();
         FlashlightLogic();
+        InteractionLogic();
     }
 
     void FixedUpdate()
@@ -85,15 +90,28 @@ public class PlayerController : MonoBehaviour
         IsCinemaMode();
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other) 
     {
         if (other.name == "Trigger")
         {
             StartCoroutine(NewObjective(objectives, "• Enter the House"));
         }
+        if (other.name == "SecondTrigger")
+        {
+            interactionUI.SetActive(true);
+            isNearMainDoor = true;
+        }
+    }
+    void OnTriggerExit(Collider other)
+    {
+        if (other.name == "SecondTrigger")
+        {
+            interactionUI.SetActive(false);
+            isNearMainDoor = false;
+        }
     }
 
-    IEnumerator NewObjective(TMP_Text oldText, string newText)
+    IEnumerator NewObjective(TMP_Text oldText, string newText) // Replace text
     {
         oldText.text = "<s>" + oldText.text + "</s>";
 
@@ -239,6 +257,13 @@ public class PlayerController : MonoBehaviour
                 flashlightBar.value = battery;
                 flashTimer = 0;
             }
+        }
+    }
+    void InteractionLogic()
+    {
+        if (Input.GetKey(KeyCode.E) && interactionUI.activeSelf && isNearMainDoor) // Teleports player inside the mansion
+        {
+            SceneManager.LoadScene("Mansion");
         }
     }
 }

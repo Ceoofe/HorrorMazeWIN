@@ -82,6 +82,7 @@ public class PlayerController : MonoBehaviour
         SprintLogic();
         FlashlightLogic();
         InteractionLogic();
+        SkipCutScene();
     }
 
     void FixedUpdate()
@@ -164,6 +165,16 @@ public class PlayerController : MonoBehaviour
             mainCam.Rotate(0, 0, 0.1f, Space.World); // Right slant camera
         }
         return;
+    }
+    void SkipCutScene()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isCinemaMode)
+        {
+            transform.position = new Vector3(4.444809f, 1f, -11.10724f);
+            isCinemaMode = false;
+            cinema.SetActive(false);
+            plrUI.SetActive(true);
+        }
     }
     void Movement()
     {

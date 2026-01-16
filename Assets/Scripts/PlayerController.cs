@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
 public class PlayerController : MonoBehaviour
 {
     public static int health = 100;
@@ -28,33 +27,25 @@ public class PlayerController : MonoBehaviour
     TMP_Text batteryUI;
     TMP_Text objectives;
 
-    AudioSource audioSource;
-    public AudioClip[] clips; // WIP need to change clips to different ones 
-    public static bool isCinemaMode = true; // False to skip cutescene
+    AudioSource[] audioSources;
+    public AudioClip[] clips;
+    public static bool isCinemaMode; // False to skip cutescene
     bool lowFuel = false;
     bool noFuel = false;
     bool rotateCam = false;
     bool isOn = false;
     bool isSprinting = false;
     bool isNearMainDoor = false;
-    
+
+    public enum GameState { Highway, Mansion }
+    public GameState currentState;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Reset 
-        isCinemaMode = true;
-        lowFuel = false;
-        noFuel = false;
-        rotateCam = false;
-        isOn = false;
-        isSprinting = false;
-        stamina = 100f;
-        battery = 100f;
-
         GameObject canvas = GameObject.Find("Canvas");
 
-        audioSource = GetComponent<AudioSource>();
+        audioSources = GetComponents<AudioSource>();
         plrUI = canvas.transform.Find("PlayerUI").gameObject;
         staminaBar = plrUI.transform.Find("StaminaBar").GetComponent<Slider>();
         flashlightBar = plrUI.transform.Find("FlashlightBar").GetComponent<Slider>();
@@ -69,7 +60,20 @@ public class PlayerController : MonoBehaviour
         
         highSpeed = Mathf.Pow(speed, 3);
 
-        StartCoroutine("NoFuel"); // Starts cutscene
+        if (currentState == GameState.Highway)
+        {
+            StartCoroutine(NoFuel()); // Starts cutscene
+
+            // Reset
+            isCinemaMode = true;
+            lowFuel = false;
+            noFuel = false;
+            rotateCam = false;
+            isOn = false;
+            isSprinting = false;
+            stamina = 100f;
+            battery = 100f;
+        }
     }
 
     // Update is called once per frame
@@ -122,15 +126,17 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator NoFuel() // Cutscene
     {
+        audioSources[1].PlayOneShot(clips[3]);
         yield return new WaitForSeconds(5f);
-        barrier.gameObject.SetActive(false);
+        barrier.SetActive(false);
         lowFuel = true;
         yield return new WaitForSeconds(18f);
         noFuel = true;
         yield return new WaitForSeconds(1f);
         rotateCam = true;
         yield return new WaitForSeconds(.5f);
-        barrier.gameObject.SetActive(true);
+        audioSources[1].Stop();
+        barrier.SetActive(true);
         isCinemaMode = false;
         cinema.SetActive(false);
         plrUI.SetActive(true);
@@ -140,12 +146,12 @@ public class PlayerController : MonoBehaviour
     {
         if (noFuel)
         {
-            transform.Translate(Vector3.forward * 10 * Time.deltaTime); // Forward
-            transform.Translate(Vector3.right * speed * Time.deltaTime); // Right
+            transform.Translate(10 * Time.deltaTime * Vector3.forward); // Forward
+            transform.Translate(speed * Time.deltaTime * Vector3.right); // Right
         }
         else
         {
-            transform.Translate(Vector3.forward * highSpeed * Time.deltaTime); // Forward
+            transform.Translate(highSpeed * Time.deltaTime * Vector3.forward); // Forward
 
             if (lowFuel)
             {
@@ -170,16 +176,18 @@ public class PlayerController : MonoBehaviour
         // Walking Sound
         if (hor != 0 || ver != 0)
         {
-            if (!audioSource.isPlaying)
+            if (!audioSources[1].isPlaying)
             {
-                audioSource.PlayOneShot(clips[1]);
+                if (isSprinting)
+                {
+                    // replace the audio with running clip
+                }
+                audioSources[1].PlayOneShot(clips[1]);
             }
         }
     }
     void SprintLogic()
     {
-        float hor = Input.GetAxis("Horizontal");
-        float ver = Input.GetAxis("Vertical");
         if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode) // Sprint WIP sprints when player isnt moving
         {
             isSprinting = true;
@@ -238,9 +246,9 @@ public class PlayerController : MonoBehaviour
                 flashLight.SetActive(true);
                 isOn = true;
 
-                if (!audioSource.isPlaying)
+                if (!audioSources[0].isPlaying)
                 {
-                    audioSource.PlayOneShot(clips[2]);
+                    audioSources[0].PlayOneShot(clips[2]);
                 }
             }
         }

@@ -1242,6 +1242,9 @@ Transform:
 =======
   m_Father: {fileID: 0}
   m_RootOrder: 7
+<<<<<<< HEAD
+>>>>>>> 44e1065d865dfd604cbaa1a5d39496a702721521
+=======
 >>>>>>> 44e1065d865dfd604cbaa1a5d39496a702721521
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &239758385
@@ -3028,6 +3031,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 880570329}
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &966384938
 GameObject:
   m_ObjectHideFlags: 0
@@ -3125,6 +3129,8 @@ Transform:
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 =======
+=======
+>>>>>>> 44e1065d865dfd604cbaa1a5d39496a702721521
 --- !u!4 &1029291953 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4295433126537891913, guid: 35beb693552cb0b42a2bee4c8a1bd4e3, type: 3}
@@ -3135,6 +3141,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4295433126537891913, guid: 35beb693552cb0b42a2bee4c8a1bd4e3, type: 3}
   m_PrefabInstance: {fileID: 1966634492}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< HEAD
+>>>>>>> 44e1065d865dfd604cbaa1a5d39496a702721521
+=======
 >>>>>>> 44e1065d865dfd604cbaa1a5d39496a702721521
 --- !u!1001 &1075299414
 PrefabInstance:
@@ -3974,8 +3983,13 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Father: {fileID: 0}
   m_RootOrder: 11
+=======
+  m_Father: {fileID: 1856433499}
+  m_RootOrder: 0
+>>>>>>> 44e1065d865dfd604cbaa1a5d39496a702721521
 =======
   m_Father: {fileID: 1856433499}
   m_RootOrder: 0

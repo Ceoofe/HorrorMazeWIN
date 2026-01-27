@@ -171,6 +171,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isCinemaMode)
         {
             transform.position = new Vector3(4.444809f, 1f, -11.10724f);
+            audioSources[1].Stop();
             isCinemaMode = false;
             cinema.SetActive(false);
             plrUI.SetActive(true);

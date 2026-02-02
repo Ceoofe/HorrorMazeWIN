@@ -6,8 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
-    public static int health = 100;
-
     public float speed;
     float highSpeed;
     float stamina = 100f;

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
+    // Find a way to save the data from one scene to another
     public float speed;
     float highSpeed;
     float stamina = 100f;

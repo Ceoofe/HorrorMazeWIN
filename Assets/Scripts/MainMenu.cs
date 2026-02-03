@@ -14,6 +14,7 @@ public class MainMenu : MonoBehaviour
     GameObject graphics;
     GameObject sounds;
     GameObject controls;
+    GameObject transition;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +25,8 @@ public class MainMenu : MonoBehaviour
         sounds = panel.Find("SoundsPanel").gameObject;
         controls = panel.Find("ControlsPanel").gameObject;
 
+        transition = transform.Find("Transition").gameObject;
+
         dropDownFPS = graphics.transform.Find("LimitFPS").GetComponent<TMP_Dropdown>();
         dropDownQuality = graphics.transform.Find("Graphics").GetComponent<TMP_Dropdown>();
         fullScreen = display.transform.Find("FullScreenToggle").GetComponent<Toggle>();
@@ -33,10 +36,17 @@ public class MainMenu : MonoBehaviour
         LoadIsFullScreen();
     }
 
+    IEnumerator WaitTime(float seconds)
+    {
+        Time.timeScale = 1f;
+        yield return new WaitForSeconds(seconds);
+        SceneManager.LoadScene(1);
+    }
+
     public void Play()
     {
-        SceneManager.LoadScene(1);
-        Time.timeScale = 1f;
+        transition.SetActive(true);
+        StartCoroutine(WaitTime(1.55f));
     }
     public void Exit()
     {

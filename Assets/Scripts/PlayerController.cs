@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(NoFuel()); // Starts cutscene
 
             // Reset
+            audioSources[1].Play();
             isCinemaMode = true;
             lowFuel = false;
             noFuel = false;
@@ -127,7 +128,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator NoFuel() // Cutscene
     {
         audioSources[1].PlayOneShot(clips[3]);
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(4.5f);
         barrier.SetActive(false);
         lowFuel = true;
         yield return new WaitForSeconds(18f);
@@ -142,7 +143,7 @@ public class PlayerController : MonoBehaviour
         plrUI.SetActive(true);
     }
 
-    void IsCinemaMode()
+    void IsCinemaMode() // Best option is to create an animation not this 
     {
         if (noFuel)
         {
@@ -155,7 +156,7 @@ public class PlayerController : MonoBehaviour
 
             if (lowFuel)
             {
-                highSpeed -= .9f * Time.deltaTime;
+                highSpeed -= .9f * Time.deltaTime; //.9f
             }
             //Debug.Log(highSpeed); Remove speed by .5 every second
         }
@@ -163,13 +164,12 @@ public class PlayerController : MonoBehaviour
         {
             mainCam.Rotate(0, 0, 0.1f, Space.World); // Right slant camera
         }
-        return;
     }
     void SkipCutScene()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isCinemaMode)
         {
-            transform.position = new Vector3(4.444809f, 1f, -11.10724f);
+            transform.position = new Vector3(4.443588f, 1f, -.7871414f);
             audioSources[1].Stop();
             isCinemaMode = false;
             cinema.SetActive(false);

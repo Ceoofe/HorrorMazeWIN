@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +7,6 @@ public class PlayerController : MonoBehaviour
 {
     // Find a way to save the data from one scene to another
     public float speed;
-    float highSpeed;
     float stamina = 100f;
     float battery = 100f;
     float timer;
@@ -29,12 +27,11 @@ public class PlayerController : MonoBehaviour
     AudioSource[] audioSources;
     public AudioClip[] clips;
     public static bool isCinemaMode; // False to skip cutescene
-    bool lowFuel = false;
-    bool noFuel = false;
-    bool rotateCam = false;
     bool isOn = false;
     bool isSprinting = false;
     bool isNearMainDoor = false;
+
+    Animator animator;
 
     public enum GameState { Highway, Mansion }
     public GameState currentState;
@@ -57,18 +54,15 @@ public class PlayerController : MonoBehaviour
         flashLight = mainCam.Find("Flashlight").gameObject;
         barrier = GameObject.Find("Barrier"); // Barrier for the player to not fall off the map or roaming around somewhere else
         
-        highSpeed = Mathf.Pow(speed, 3);
+        animator = GetComponent<Animator>();
 
         if (currentState == GameState.Highway)
         {
-            StartCoroutine(NoFuel()); // Starts cutscene
-
-            // Reset
+            StartCoroutine(CarDriving()); // Starts cutscene
+            // Reset values
             audioSources[1].Play();
+            barrier.SetActive(false);
             isCinemaMode = true;
-            lowFuel = false;
-            noFuel = false;
-            rotateCam = false;
             isOn = false;
             isSprinting = false;
             stamina = 100f;
@@ -90,9 +84,7 @@ public class PlayerController : MonoBehaviour
         if (!isCinemaMode)
         {
             Movement(); // Movement
-            return;
         }
-        IsCinemaMode();
     }
 
     void OnTriggerEnter(Collider other) 
@@ -125,51 +117,23 @@ public class PlayerController : MonoBehaviour
         oldText.text = newText;
     }
 
-    IEnumerator NoFuel() // Cutscene
+    IEnumerator CarDriving() // Cutscene
     {
-        audioSources[1].PlayOneShot(clips[3]);
-        yield return new WaitForSeconds(4.5f);
-        barrier.SetActive(false);
-        lowFuel = true;
-        yield return new WaitForSeconds(18f);
-        noFuel = true;
-        yield return new WaitForSeconds(1f);
-        rotateCam = true;
-        yield return new WaitForSeconds(.5f);
-        audioSources[1].Stop();
+        audioSources[1].PlayOneShot(clips[3]); // Play car sound
+        yield return new WaitForSeconds(25f); // Wait until the cutscene is over
+        animator.enabled = false; // disable cutscene animation
+        audioSources[1].Stop(); // no car sound
         barrier.SetActive(true);
         isCinemaMode = false;
         cinema.SetActive(false);
         plrUI.SetActive(true);
     }
-
-    void IsCinemaMode() // Best option is to create an animation not this 
-    {
-        if (noFuel)
-        {
-            transform.Translate(10 * Time.deltaTime * Vector3.forward); // Forward
-            transform.Translate(speed * Time.deltaTime * Vector3.right); // Right
-        }
-        else
-        {
-            transform.Translate(highSpeed * Time.deltaTime * Vector3.forward); // Forward
-
-            if (lowFuel)
-            {
-                highSpeed -= .9f * Time.deltaTime; //.9f
-            }
-            //Debug.Log(highSpeed); Remove speed by .5 every second
-        }
-        if (rotateCam)
-        {
-            mainCam.Rotate(0, 0, 0.1f, Space.World); // Right slant camera
-        }
-    }
     void SkipCutScene()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isCinemaMode)
         {
-            transform.position = new Vector3(4.443588f, 1f, -.7871414f);
+            animator.enabled = false;
+            transform.position = new Vector3(4.44f, 1f, -.77f);
             audioSources[1].Stop();
             isCinemaMode = false;
             cinema.SetActive(false);

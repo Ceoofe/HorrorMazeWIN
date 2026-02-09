@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviour
 
         if (currentState == GameState.Highway)
         {
+            animator.enabled = true;
             StartCoroutine(CarDriving()); // Starts cutscene
             // Reset values
             audioSources[1].Play();

@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.name == "Trigger")
         {
-            StartCoroutine(NewObjective(objectives, "• Enter the House"));
+            StartCoroutine(NewObjective(objectives, "• Enter the House", 1));
         }
         if (other.name == "SecondTrigger")
         {
@@ -109,13 +109,35 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator NewObjective(TMP_Text oldText, string newText) // Replace text
+    IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum) // Replace text
     {
-        oldText.text = "<s>" + oldText.text + "</s>";
+        int index = oldText.text.LastIndexOf("•");
+        if (objNum == 1)
+        {
+            string oldObj = oldText.text.Substring(0, index);
+            string remain = oldText.text.Substring(index);
 
-        yield return new WaitForSeconds(2f);
+            oldObj = "<s>" + oldObj + "</s>";
 
-        oldText.text = newText;
+            oldText.text = oldObj + remain;
+
+            yield return new WaitForSeconds(2f);
+
+            oldText.text = newObj + "\n" + remain;
+        }
+        else if (objNum == 2)
+        {
+            string remain = oldText.text.Substring(0, index);
+            string oldObj = oldText.text.Substring(index);
+
+            oldObj = "<s>" + oldObj + "</s>";
+
+            oldText.text = remain + oldObj;
+
+            yield return new WaitForSeconds(2f);
+
+            oldText.text = remain + newObj;
+        }
     }
 
     IEnumerator CarDriving() // Cutscene
@@ -212,6 +234,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F) && !isCinemaMode)
         {
+            StartCoroutine(NewObjective(objectives, "", 2));
             if (isOn)
             {
                 flashLight.SetActive(false);

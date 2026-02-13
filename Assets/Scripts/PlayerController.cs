@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     bool isOn = false;
     bool isSprinting = false;
     bool isNearMainDoor = false;
+    bool isDone = false;
 
     Animator animator;
 
@@ -255,7 +256,11 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F) && !isCinemaMode)
         {
-            StartCoroutine(NewObjective(objectives, "", 2));
+            if (!isDone)
+            {
+                StartCoroutine(NewObjective(objectives, "", 2));
+                isDone = true;
+            }
             if (isOn)
             {
                 flashLight.SetActive(false);

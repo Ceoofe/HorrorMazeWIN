@@ -172,6 +172,7 @@ public class PlayerController : MonoBehaviour
         isCinemaMode = false;
         cinema.SetActive(false);
         plrUI.SetActive(true);
+        Destroy(GameObject.Find("Cars"));
     }
     void SkipCutScene()
     {
@@ -183,6 +184,7 @@ public class PlayerController : MonoBehaviour
             isCinemaMode = false;
             cinema.SetActive(false);
             plrUI.SetActive(true);
+            Destroy(GameObject.Find("Cars"));
         }
     }
     void Movement()

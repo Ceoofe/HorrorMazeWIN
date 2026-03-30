@@ -79,6 +79,11 @@ public class PlayerController : MonoBehaviour
         FlashlightLogic();
         InteractionLogic();
         SkipCutScene();
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            ScreenCapture.CaptureScreenshot("Thumbnail.png");
+        }
     }
 
     void FixedUpdate()

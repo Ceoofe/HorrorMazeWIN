@@ -7,8 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     // Find a way to save the data from one scene to another
     public float speed;
-    float stamina = 100f;
-    float battery = 100f;
+    public static float stamina = 100f;
+    public static float battery = 100f;
     float timer;
     float flashTimer;
     readonly float waitTime = 0.05f;
@@ -34,9 +34,6 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
 
-    public enum GameState { Highway, Mansion }
-    public GameState currentState;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -57,7 +54,7 @@ public class PlayerController : MonoBehaviour
         
         animator = GetComponent<Animator>();
 
-        if (currentState == GameState.Highway)
+        if (SceneManager.GetActiveScene().name == "Game")
         {
             animator.enabled = true;
             StartCoroutine(CarDriving()); // Starts cutscene
@@ -70,6 +67,11 @@ public class PlayerController : MonoBehaviour
             stamina = 100f;
             battery = 100f;
         }
+
+        // Reload values
+        flashlightBar.value = battery;
+        batteryUI.text = battery.ToString() + "%";
+        
     }
 
     // Update is called once per frame
@@ -79,11 +81,6 @@ public class PlayerController : MonoBehaviour
         FlashlightLogic();
         InteractionLogic();
         SkipCutScene();
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            ScreenCapture.CaptureScreenshot("Thumbnail.png");
-        }
     }
 
     void FixedUpdate()

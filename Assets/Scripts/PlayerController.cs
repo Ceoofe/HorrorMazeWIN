@@ -102,6 +102,11 @@ public class PlayerController : MonoBehaviour
             interactionUI.SetActive(true);
             isNearMainDoor = true;
         }
+
+        if (other.CompareTag("Door"))
+        {
+            interactionUI.SetActive(true);
+        }
     }
     void OnTriggerExit(Collider other)
     {
@@ -109,6 +114,11 @@ public class PlayerController : MonoBehaviour
         {
             interactionUI.SetActive(false);
             isNearMainDoor = false;
+        }
+
+        if (other.CompareTag("Door"))
+        {
+            interactionUI.SetActive(false);
         }
     }
 

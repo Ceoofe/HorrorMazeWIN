@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     GameObject barrier;
     GameObject plrUI;
     GameObject interactionUI;
+    GameObject transition;
     Transform mainCam;
     Slider staminaBar;
     Slider flashlightBar;
@@ -34,6 +35,8 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
 
+    public static string[] item = new string[1];
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,6 +49,7 @@ public class PlayerController : MonoBehaviour
         batteryUI = flashlightBar.transform.Find("BatteryLevel").GetComponent<TMP_Text>();
         objectives = plrUI.transform.Find("ObjectiveUI/Objectives").GetComponent<TMP_Text>();
         interactionUI = plrUI.transform.Find("Indicator").gameObject;
+        transition = canvas.transform.Find("Transition").gameObject;
 
         cinema = canvas.transform.Find("Cinema").gameObject;
         mainCam = transform.Find("Main Camera");
@@ -121,7 +125,6 @@ public class PlayerController : MonoBehaviour
             interactionUI.SetActive(false);
         }
     }
-
     IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum) // Replace text
     {
         int index = oldText.text.LastIndexOf("•");
@@ -310,7 +313,8 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.E) && interactionUI.activeSelf && isNearMainDoor) // Teleports player inside the mansion
         {
-            SceneManager.LoadScene("Mansion");
+            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, 2, transition));
+            // Make player not move
         }
     }
 }

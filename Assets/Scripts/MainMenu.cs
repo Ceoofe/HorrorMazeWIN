@@ -36,17 +36,9 @@ public class MainMenu : MonoBehaviour
         LoadIsFullScreen();
     }
 
-    IEnumerator WaitTime(float seconds)
-    {
-        Time.timeScale = 1f;
-        yield return new WaitForSeconds(seconds);
-        SceneManager.LoadScene(1);
-    }
-
     public void Play()
     {
-        transition.SetActive(true);
-        StartCoroutine(WaitTime(1.55f));
+        StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, 1, transition));
     }
     public void Exit()
     {

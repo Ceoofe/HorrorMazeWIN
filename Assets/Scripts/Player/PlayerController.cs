@@ -8,30 +8,28 @@ public class PlayerController : MonoBehaviour
     // Find a way to save the data from one scene to another
     public float speed;
     public static float stamina = 100f;
-    public static float battery = 100f;
     float timer;
-    float flashTimer;
     readonly float waitTime = 0.05f;
 
     GameObject cinema;
     GameObject flashLight;
     GameObject barrier;
-    GameObject plrUI;
     GameObject interactionUI;
     GameObject transition;
+
+    Transform plrUI;
     Transform mainCam;
+
     Slider staminaBar;
-    Slider flashlightBar;
-    TMP_Text batteryUI;
+
     TMP_Text objectives;
 
-    AudioSource[] audioSources;
+    public static AudioSource[] audioSources;
     public AudioClip[] clips;
+
     public static bool isCinemaMode; // False to skip cutescene
-    bool isOn = false;
     bool isSprinting = false;
     bool isNearMainDoor = false;
-    bool isDone = false;
 
     Animator animator;
 
@@ -40,18 +38,16 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject canvas = GameObject.Find("Canvas");
+        Transform canvas = GameObject.Find("Canvas").transform;
 
         audioSources = GetComponents<AudioSource>();
-        plrUI = canvas.transform.Find("PlayerUI").gameObject;
-        staminaBar = plrUI.transform.Find("StaminaBar").GetComponent<Slider>();
-        flashlightBar = plrUI.transform.Find("FlashlightBar").GetComponent<Slider>();
-        batteryUI = flashlightBar.transform.Find("BatteryLevel").GetComponent<TMP_Text>();
-        objectives = plrUI.transform.Find("ObjectiveUI/Objectives").GetComponent<TMP_Text>();
-        interactionUI = plrUI.transform.Find("Indicator").gameObject;
-        transition = canvas.transform.Find("Transition").gameObject;
+        plrUI = canvas.Find("PlayerUI");
+        staminaBar = plrUI.Find("StaminaBar").GetComponent<Slider>();
+        objectives = plrUI.Find("ObjectiveUI/Objectives").GetComponent<TMP_Text>();
+        interactionUI = plrUI.Find("Indicator").gameObject;
+        transition = canvas.Find("Transition").gameObject;
 
-        cinema = canvas.transform.Find("Cinema").gameObject;
+        cinema = canvas.Find("Cinema").gameObject;
         mainCam = transform.Find("Main Camera");
         flashLight = mainCam.Find("Flashlight").gameObject;
         barrier = GameObject.Find("Barrier"); // Barrier for the player to not fall off the map or roaming around somewhere else
@@ -66,15 +62,9 @@ public class PlayerController : MonoBehaviour
             audioSources[1].Play();
             barrier.SetActive(false);
             isCinemaMode = true;
-            isOn = false;
             isSprinting = false;
             stamina = 100f;
-            battery = 100f;
         }
-
-        // Reload values
-        flashlightBar.value = battery;
-        batteryUI.text = battery.ToString() + "%";
         
     }
 
@@ -82,7 +72,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         SprintLogic();
-        FlashlightLogic();
         InteractionLogic();
         SkipCutScene();
     }
@@ -125,7 +114,7 @@ public class PlayerController : MonoBehaviour
             interactionUI.SetActive(false);
         }
     }
-    IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum) // Replace text
+    public IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum) // Replace text
     {
         int index = oldText.text.LastIndexOf("•");
 
@@ -186,7 +175,7 @@ public class PlayerController : MonoBehaviour
         barrier.SetActive(true);
         isCinemaMode = false;
         cinema.SetActive(false);
-        plrUI.SetActive(true);
+        plrUI.gameObject.SetActive(true);
         Destroy(GameObject.Find("Cars"));
     }
     void SkipCutScene()
@@ -198,7 +187,7 @@ public class PlayerController : MonoBehaviour
             audioSources[1].Stop();
             isCinemaMode = false;
             cinema.SetActive(false);
-            plrUI.SetActive(true);
+            plrUI.gameObject.SetActive(true);
             Destroy(GameObject.Find("Cars"));
         }
     }
@@ -268,46 +257,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         staminaBar.value = stamina; // Updates Stamina Bar UI
-    }
-    void FlashlightLogic()
-    {
-        if (Input.GetKeyDown(KeyCode.F) && !isCinemaMode)
-        {
-            if (!isDone)
-            {
-                StartCoroutine(NewObjective(objectives, "", 2));
-                isDone = true;
-            }
-            if (isOn)
-            {
-                flashLight.SetActive(false);
-                isOn = false;
-            }
-            else if (isOn == false)
-            {
-                flashLight.SetActive(true);
-                isOn = true;
-
-                if (!audioSources[0].isPlaying)
-                {
-                    audioSources[0].PlayOneShot(clips[2]);
-                }
-            }
-        }
-        if (isOn == true)
-        {
-            flashTimer += Time.deltaTime;
-            if (flashTimer >= (waitTime*100)) // every 5 seconds
-            {
-                if (battery >= 1)
-                {
-                    battery--; // Decrease flashlight battery
-                }
-                batteryUI.text = battery.ToString() + "%";
-                flashlightBar.value = battery;
-                flashTimer = 0;
-            }
-        }
     }
     void InteractionLogic()
     {

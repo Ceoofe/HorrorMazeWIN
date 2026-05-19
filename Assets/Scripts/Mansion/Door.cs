@@ -39,11 +39,12 @@ public class Door : MonoBehaviour
             }
         }
 
-        if (isTrigger && Input.GetKeyDown(KeyCode.E) && !isLocked)
+        if (isTrigger && Input.GetKeyDown(KeyCode.E) && !isLocked && PlayerController.item[0] == currentKey.ToString())
         {
             Debug.Log("Unlocked!");
-            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, transition));
-            plr.transform.position = new Vector3 (15f, 1.2f, -8f); // WIP
+            isTrigger = false;
+            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, transition, plr, new Vector3(15f, 1.2f, -8f)));
+            PlayerController.item[0] = null;
         }
         else if (isTrigger && Input.GetKeyDown(KeyCode.E))
         {

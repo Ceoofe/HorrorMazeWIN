@@ -12,11 +12,12 @@ public class Transition : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         SceneManager.LoadScene(scene);
     }
-    public IEnumerator LoadingScreen(float seconds, GameObject transition)
+    public IEnumerator LoadingScreen(float seconds, GameObject transition, GameObject plr, Vector3 pos)
     {
         transition.SetActive(true);
-        Time.timeScale = 1f;
         yield return new WaitForSeconds(seconds);
+        transition.SetActive(false);
+        plr.transform.position = pos;
     }
 
 

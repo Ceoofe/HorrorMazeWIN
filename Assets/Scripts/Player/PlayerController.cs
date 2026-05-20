@@ -12,13 +12,11 @@ public class PlayerController : MonoBehaviour
     readonly float waitTime = 0.05f;
 
     GameObject cinema;
-    GameObject flashLight;
     GameObject barrier;
     GameObject interactionUI;
     GameObject transition;
 
     Transform plrUI;
-    Transform mainCam;
 
     Slider staminaBar;
 
@@ -30,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public static bool isCinemaMode; // False to skip cutescene
     bool isSprinting = false;
     bool isNearMainDoor = false;
+    bool check = false;
 
     Animator animator;
 
@@ -48,8 +47,6 @@ public class PlayerController : MonoBehaviour
         transition = canvas.Find("Transition").gameObject;
 
         cinema = canvas.Find("Cinema").gameObject;
-        mainCam = transform.Find("Main Camera");
-        flashLight = mainCam.Find("Flashlight").gameObject;
         barrier = GameObject.Find("Barrier"); // Barrier for the player to not fall off the map or roaming around somewhere else
         
         animator = GetComponent<Animator>();
@@ -86,11 +83,13 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter(Collider other) 
     {
-        if (other.name == "Trigger")
+
+        if (other.name == "Trigger" && !check) // Changes objective
         {
-            StartCoroutine(NewObjective(objectives, "• Enter the House", 1));
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "• Enter the House", 1));
+            check = true;
         }
-        if (other.name == "SecondTrigger")
+        if (other.name == "SecondTrigger" && check) // Player at the front door
         {
             interactionUI.SetActive(true);
             isNearMainDoor = true;
@@ -114,57 +113,6 @@ public class PlayerController : MonoBehaviour
             interactionUI.SetActive(false);
         }
     }
-    public IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum) // Replace text
-    {
-        int index = oldText.text.LastIndexOf("•");
-
-        if (objNum == 1)
-        {
-            string oldObj;
-            string remain = oldText.text.Substring(index);
-            if (index == 0)
-            {
-                oldObj = oldText.text.Substring(index);
-                oldObj = "<s>" + oldObj + "</s>";
-                oldText.text = oldObj;
-                yield return new WaitForSeconds(2f);
-                oldText.text = newObj;
-                yield break;
-            }
-            else
-            {
-                oldObj = oldText.text.Substring(0, index);
-
-                oldObj = "<s>" + oldObj + "</s>";
-                oldText.text = oldObj + remain;
-            }
-
-            yield return new WaitForSeconds(2f);
-
-            oldText.text = newObj + "\n" + remain;
-        }
-        else if (objNum == 2)
-        {
-            string remain;
-            string oldObj;
-            if (index == 0)
-            {
-                remain = oldText.text.Substring(index);
-                oldText.text = remain + newObj;
-            }
-            else
-            {
-                remain = oldText.text.Substring(0, index);
-                oldObj = oldText.text.Substring(index);
-                oldObj = "<s>" + oldObj + "</s>";
-                oldText.text = remain + oldObj;
-            }
-
-            yield return new WaitForSeconds(2f);
-
-            oldText.text = remain + newObj;
-        }
-    }
 
     IEnumerator CarDriving() // Cutscene
     {
@@ -177,18 +125,23 @@ public class PlayerController : MonoBehaviour
         cinema.SetActive(false);
         plrUI.gameObject.SetActive(true);
         Destroy(GameObject.Find("Cars"));
+        if (!FlashLight.isDone)
+        {
+            gameObject.GetComponent<PlayerController>().enabled = false;
+        }
     }
     void SkipCutScene()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isCinemaMode)
         {
             animator.enabled = false;
-            transform.position = new Vector3(4.44f, 1f, -.77f);
+            transform.position = new Vector3(4.44f, 1.2f, -7.7f);
             audioSources[1].Stop();
             isCinemaMode = false;
             cinema.SetActive(false);
             plrUI.gameObject.SetActive(true);
             Destroy(GameObject.Find("Cars"));
+            gameObject.GetComponent<PlayerController>().enabled = false;
         }
     }
     void Movement()
@@ -214,6 +167,7 @@ public class PlayerController : MonoBehaviour
     }
     void SprintLogic()
     {
+
         if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode) // Sprint WIP sprints when player isnt moving
         {
             isSprinting = true;
@@ -262,6 +216,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.E) && interactionUI.activeSelf && isNearMainDoor) // Teleports player inside the mansion
         {
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 1));
             StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, 2, transition));
             // Make player not move
         }

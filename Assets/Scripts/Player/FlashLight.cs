@@ -10,7 +10,7 @@ public class FlashLight : MonoBehaviour
     PlayerController plrController;
 
     bool isOn = false;
-    bool isDone = false;
+    public static bool isDone = false;
 
     float flashTimer;
     readonly float waitTime = 0.05f;
@@ -21,6 +21,8 @@ public class FlashLight : MonoBehaviour
     Slider flashlightBar;
 
     GameObject flashLight;
+
+    Transform plrUI;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +30,7 @@ public class FlashLight : MonoBehaviour
 
         flashLight = transform.Find("Main Camera/Flashlight").gameObject;
 
-        Transform plrUI = GameObject.Find("Canvas").transform.Find("PlayerUI").transform;
+        plrUI = GameObject.Find("Canvas").transform.Find("PlayerUI").transform;
         flashlightBar = plrUI.Find("FlashlightBar").GetComponent<Slider>();
         batteryUI = flashlightBar.transform.Find("BatteryLevel").GetComponent<TMP_Text>();
         objectives = plrUI.Find("ObjectiveUI/Objectives").GetComponent<TMP_Text>();
@@ -52,7 +54,8 @@ public class FlashLight : MonoBehaviour
         {
             if (!isDone) // The first Objective
             {
-                StartCoroutine(plrController.NewObjective(objectives, "", 2));
+                StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 2));
+                plrController.enabled = true;
                 isDone = true;
             }
 

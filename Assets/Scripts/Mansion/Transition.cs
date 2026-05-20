@@ -12,20 +12,27 @@ public class Transition : MonoBehaviour
 
     void Awake()
     {
-        plrController = GameObject.Find("Player").GetComponent<PlayerController>();
-        flashLight = GameObject.Find("Player").GetComponent<FlashLight>();
-        cam = GameObject.Find("Player/Main Camera").GetComponent<CameraMovement>();
-        mini = GameObject.Find("Canvas").GetComponent<MiniMenu>();
+        if (SceneManager.GetActiveScene().name != "Main Menu")
+        {
+            plrController = GameObject.Find("Player").GetComponent<PlayerController>();
+            flashLight = GameObject.Find("Player").GetComponent<FlashLight>();
+            cam = GameObject.Find("Player/Main Camera").GetComponent<CameraMovement>();
+            mini = GameObject.Find("Canvas").GetComponent<MiniMenu>();
+        }
+        
     }
     public IEnumerator LoadingScreen(float seconds, int scene, GameObject transition)
     {
         transition.SetActive(true);
         Time.timeScale = 1f;
-        // Turn off player movement
+        // Turn off player movement\
+        if (SceneManager.GetActiveScene().name != "Main Menu")
+        {
         flashLight.enabled = false;
         cam.enabled = false;
         mini.enabled = false;
         plrController.enabled = false;
+        }
         yield return new WaitForSeconds(seconds);
         SceneManager.LoadScene(scene);
     }

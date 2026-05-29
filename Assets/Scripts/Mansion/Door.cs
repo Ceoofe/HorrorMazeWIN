@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public bool isLocked = true;
-
     GameObject message;
     GameObject transition;
     GameObject plr;
@@ -16,6 +14,8 @@ public class Door : MonoBehaviour
 
     public enum KeyType { YellowKey, RedKey, BlueKey, GreenKey, PurpleKey , None};
     public KeyType currentKey;
+
+    public Vector3 plrPosition;
 
     // Start is called before the first frame update
     void Start()
@@ -39,12 +39,13 @@ public class Door : MonoBehaviour
             }
         }
 
-        if (isTrigger && Input.GetKeyDown(KeyCode.E) && !isLocked && PlayerController.item[0] == currentKey.ToString())
+        if (isTrigger && Input.GetKeyDown(KeyCode.E) && PlayerController.item[0] == currentKey.ToString())
         {
             Debug.Log("Unlocked!");
             isTrigger = false;
-            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, transition, plr, new Vector3(15f, 1.2f, -8f)));
-            PlayerController.item[0] = null;
+            currentKey = KeyType.None;
+            PlayerController.item[0] = "None";
+            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(3f, transition, plr, plrPosition));
         }
         else if (isTrigger && Input.GetKeyDown(KeyCode.E))
         {
@@ -55,12 +56,11 @@ public class Door : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && isLocked && PlayerController.item[0] == currentKey.ToString())
+        if (other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
         {
-            isLocked = false;
             isTrigger = true;
         }
-        else if (other.CompareTag("Player") && isLocked)
+        else if (other.CompareTag("Player"))
         {
             isTrigger = true;
             // Message door is locked
@@ -68,11 +68,11 @@ public class Door : MonoBehaviour
     }
     void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player") && isLocked && PlayerController.item[0] == currentKey.ToString())
+        if (other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
         {
             isTrigger = true;
         }
-        if (other.CompareTag("Player") && isLocked)
+        if (other.CompareTag("Player"))
         {
             isTrigger = true;
             // Message door is locked
@@ -80,11 +80,11 @@ public class Door : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && isLocked && PlayerController.item[0] == currentKey.ToString())
+        if (other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
         {
             isTrigger = false;
         }
-        else if (other.CompareTag("Player") && isLocked)
+        else if (other.CompareTag("Player"))
         {
             isTrigger = false;
             // Message door is locked

@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
             isSprinting = false;
             stamina = 100f;
         }
-        
+        item[0] = "None";
     }
 
     // Update is called once per frame

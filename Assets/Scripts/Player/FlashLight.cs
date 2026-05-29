@@ -64,7 +64,7 @@ public class FlashLight : MonoBehaviour
                 flashLight.SetActive(false);
                 isOn = false;
             }
-            else if (isOn == false)
+            else if (!isOn && battery > 0)
             {
                 flashLight.SetActive(true);
                 isOn = true;
@@ -76,7 +76,7 @@ public class FlashLight : MonoBehaviour
             }
         }
 
-        if (isOn == true)
+        if (isOn)
         {
             flashTimer += Time.deltaTime;
             if (flashTimer >= (waitTime * 100)) // every 5 seconds
@@ -88,6 +88,12 @@ public class FlashLight : MonoBehaviour
                 batteryUI.text = battery.ToString() + "%";
                 flashlightBar.value = battery;
                 flashTimer = 0;
+            }
+
+            if (battery <= 0)
+            {
+                isOn = false;
+                flashLight.SetActive(false);
             }
         }
     }

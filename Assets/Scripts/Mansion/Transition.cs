@@ -44,6 +44,7 @@ public class Transition : MonoBehaviour
         cam.enabled = false;
         mini.enabled = false;
         plrController.enabled = false;
+        PlayerController.item[0] = "e"; // WIP when plr spam e when transitioning to another room
         yield return new WaitForSeconds(seconds);
         transition.SetActive(false);
         flashLight.enabled = true;
@@ -51,6 +52,7 @@ public class Transition : MonoBehaviour
         mini.enabled = true;
         plrController.enabled = true;
         plr.transform.position = pos;
+        PlayerController.item[0] = "None";
     }
 
 

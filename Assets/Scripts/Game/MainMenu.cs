@@ -38,7 +38,7 @@ public class MainMenu : MonoBehaviour
 
     public void Play()
     {
-        StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, 1, transition));
+        StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, 1));
     }
     public void Exit()
     {

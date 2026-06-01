@@ -39,17 +39,19 @@ public class Door : MonoBehaviour
             }
         }
 
-        if (isTrigger && Input.GetKeyDown(KeyCode.E) && PlayerController.item[0] == currentKey.ToString())
+        if (isTrigger && PlayerController.isPressed && PlayerController.item[0] == currentKey.ToString())
         {
             Debug.Log("Unlocked!");
+            PlayerController.isPressed = false;
             isTrigger = false;
             currentKey = KeyType.None;
             PlayerController.item[0] = "None";
-            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(3f, transition, plr, plrPosition));
+            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(3f, plr, plrPosition));
         }
-        else if (isTrigger && Input.GetKeyDown(KeyCode.E))
+        else if (isTrigger && PlayerController.isPressed)
         {
             message.SetActive(true);
+            PlayerController.isPressed = false;
         }
         
     }

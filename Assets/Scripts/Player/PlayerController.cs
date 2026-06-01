@@ -5,14 +5,12 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
-    // Find a way to save the data from one scene to another
     public float speed;
     public static float stamina = 100f;
     float timer;
     readonly float waitTime = 0.05f;
 
     GameObject cinema;
-    GameObject barrier;
     GameObject interactionUI;
     GameObject transition;
 
@@ -26,16 +24,15 @@ public class PlayerController : MonoBehaviour
     public AudioClip[] clips;
 
     public static bool isCinemaMode; // False to skip cutescene
+    public static bool isPressed = false;
     bool isSprinting = false;
     bool isNearMainDoor = false;
     bool check = false;
 
-    Animator animator;
-
     public static string[] item = new string[1];
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Transform canvas = GameObject.Find("Canvas").transform;
 
@@ -47,17 +44,11 @@ public class PlayerController : MonoBehaviour
         transition = canvas.Find("Transition").gameObject;
 
         cinema = canvas.Find("Cinema").gameObject;
-        barrier = GameObject.Find("Barrier"); // Barrier for the player to not fall off the map or roaming around somewhere else
-        
-        animator = GetComponent<Animator>();
 
         if (SceneManager.GetActiveScene().name == "Game")
         {
-            animator.enabled = true;
-            StartCoroutine(CarDriving()); // Starts cutscene
             // Reset values
             audioSources[1].Play();
-            barrier.SetActive(false);
             isCinemaMode = true;
             isSprinting = false;
             stamina = 100f;
@@ -114,28 +105,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator CarDriving() // Cutscene
-    {
-        audioSources[1].PlayOneShot(clips[3]); // Play car sound
-        yield return new WaitForSeconds(25f); // Wait until the cutscene is over
-        animator.enabled = false; // disable cutscene animation
-        audioSources[1].Stop(); // no car sound
-        barrier.SetActive(true);
-        isCinemaMode = false;
-        cinema.SetActive(false);
-        plrUI.gameObject.SetActive(true);
-        Destroy(GameObject.Find("Cars"));
-        if (!FlashLight.isDone)
-        {
-            gameObject.GetComponent<PlayerController>().enabled = false;
-        }
-    }
     void SkipCutScene()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isCinemaMode)
         {
-            animator.enabled = false;
-            transform.position = new Vector3(4.44f, 1.2f, -7.7f);
+            transform.position = new Vector3(1.7f, 1.2f, -10.8f); // 4.44f 1.2f -7.7f 
             audioSources[1].Stop();
             isCinemaMode = false;
             cinema.SetActive(false);
@@ -214,11 +188,20 @@ public class PlayerController : MonoBehaviour
     }
     void InteractionLogic()
     {
-        if (Input.GetKey(KeyCode.E) && interactionUI.activeSelf && isNearMainDoor) // Teleports player inside the mansion
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            isPressed = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.E))
+        {
+            isPressed = false;
+        }
+
+
+        if (isPressed && interactionUI.activeSelf && isNearMainDoor) // Teleports player inside the mansion
         {
             StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 1));
-            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(1.55f, 2, transition));
-            // Make player not move
+            StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(3f, 2)); // Freeze player
         }
     }
 }

@@ -42,6 +42,7 @@ public class FlashLight : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name == "Game")
         {
+            isDone = false;
             isOn = false;
             battery = 100f;
         }

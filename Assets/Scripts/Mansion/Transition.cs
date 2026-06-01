@@ -19,11 +19,10 @@ public class Transition : MonoBehaviour
             cam = GameObject.Find("Player/Main Camera").GetComponent<CameraMovement>();
             mini = GameObject.Find("Canvas").GetComponent<MiniMenu>();
         }
-        
     }
-    public IEnumerator LoadingScreen(float seconds, int scene, GameObject transition)
+    public IEnumerator LoadingScreen(float seconds, int scene)
     {
-        transition.SetActive(true);
+        gameObject.SetActive(true);
         Time.timeScale = 1f;
         // Turn off player movement\
         if (SceneManager.GetActiveScene().name != "Main Menu")
@@ -36,17 +35,17 @@ public class Transition : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         SceneManager.LoadScene(scene);
     }
-    public IEnumerator LoadingScreen(float seconds, GameObject transition, GameObject plr, Vector3 pos)
+    public IEnumerator LoadingScreen(float seconds, GameObject plr, Vector3 pos)
     {
-        transition.SetActive(true);
+        gameObject.SetActive(true);
         // Turn off player movement
         flashLight.enabled = false;
         cam.enabled = false;
         mini.enabled = false;
         plrController.enabled = false;
-        PlayerController.item[0] = "e"; // WIP when plr spam e when transitioning to another room
+        PlayerController.item[0] = "e"; 
         yield return new WaitForSeconds(seconds);
-        transition.SetActive(false);
+        gameObject.SetActive(false);
         flashLight.enabled = true;
         cam.enabled = true;
         mini.enabled = true;

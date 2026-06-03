@@ -24,7 +24,7 @@ public class Door : MonoBehaviour
         message = canvas.Find("PlayerUI/Message").gameObject;
         transition = canvas.Find("Transition").gameObject;
         plr = GameObject.Find("Player");
-        //PlayerController.isPressed = false;
+        PlayerController.isPressed = false;
     }
 
     // Update is called once per frame

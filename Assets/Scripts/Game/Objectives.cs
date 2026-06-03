@@ -7,7 +7,7 @@ public class Objectives : MonoBehaviour
 {
     public IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum) // Replace text
     {
-        int index = oldText.text.LastIndexOf("•");
+        int index = oldText.text.LastIndexOf("\u2022"); // bullet point
 
         if (objNum == 1)
         {

@@ -24,6 +24,7 @@ public class Door : MonoBehaviour
         message = canvas.Find("PlayerUI/Message").gameObject;
         transition = canvas.Find("Transition").gameObject;
         plr = GameObject.Find("Player");
+        //PlayerController.isPressed = false;
     }
 
     // Update is called once per frame
@@ -48,48 +49,28 @@ public class Door : MonoBehaviour
             PlayerController.item[0] = "None";
             StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(3f, plr, plrPosition));
         }
-        else if (isTrigger && PlayerController.isPressed)
-        {
-            message.SetActive(true);
-            PlayerController.isPressed = false;
-        }
-        
+        else if (isTrigger && PlayerController.isPressed) message.SetActive(true);
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
+        if (other.CompareTag("Player") || other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
         {
-            isTrigger = true;
-        }
-        else if (other.CompareTag("Player"))
-        {
-            isTrigger = true;
-            // Message door is locked
+            isTrigger = true; // Message door is locked
         }
     }
     void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
+        if (other.CompareTag("Player") || other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
         {
-            isTrigger = true;
-        }
-        if (other.CompareTag("Player"))
-        {
-            isTrigger = true;
-            // Message door is locked
+            isTrigger = true; // Message door is locked
         }
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
+        if (other.CompareTag("Player") || other.CompareTag("Player") && PlayerController.item[0] == currentKey.ToString())
         {
-            isTrigger = false;
-        }
-        else if (other.CompareTag("Player"))
-        {
-            isTrigger = false;
-            // Message door is locked
+            isTrigger = false; // Message door is locked
         }
     }
 }

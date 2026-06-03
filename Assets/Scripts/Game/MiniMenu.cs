@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MiniMenu : MonoBehaviour
 {
+    PlayerController plrController;
     GameObject menu;
     bool isOn;
     
@@ -12,7 +13,8 @@ public class MiniMenu : MonoBehaviour
     void Start()
     {
         Transform canvas = GameObject.Find("Canvas").transform;
-        
+        plrController = GameObject.Find("Player").GetComponent<PlayerController>();
+
         menu = canvas.Find("Menu").gameObject;
     }
 
@@ -35,6 +37,7 @@ public class MiniMenu : MonoBehaviour
             isOn = false;
             Debug.Log("Closed");
         }
+
     }
 
     public void Resume()
@@ -44,7 +47,10 @@ public class MiniMenu : MonoBehaviour
         Time.timeScale = 1f;
         menu.SetActive(false);
         isOn = false;
-
+        if (!PlayerController.audioSources[0].isPlaying)
+        {
+            PlayerController.audioSources[0].PlayOneShot(plrController.clips[0]); // WIP
+        }
     }
 
     public void Exit()

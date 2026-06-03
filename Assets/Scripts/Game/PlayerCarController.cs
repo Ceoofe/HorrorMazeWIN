@@ -47,7 +47,7 @@ public class PlayerCarController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && PlayerController.isCinemaMode)
+        if (Input.GetKeyDown(KeyCode.Space) && !PlayerController.isCinemaMode)
         {
             animator.enabled = false;
             leftLight.SetActive(false);

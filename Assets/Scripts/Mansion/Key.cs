@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Key : MonoBehaviour
@@ -10,11 +11,16 @@ public class Key : MonoBehaviour
 
     GameObject indicator;
 
+    Transform plrUI;
+    TMP_Text objectives;
+
     // Start is called before the first frame update
     void Start()
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         indicator = canvas.Find("PlayerUI/Indicator").gameObject;
+        plrUI = canvas.Find("PlayerUI");
+        objectives = plrUI.Find("ObjectiveUI/Objectives").GetComponent<TMP_Text>();
     }
 
     // Update is called once per frame
@@ -27,6 +33,13 @@ public class Key : MonoBehaviour
             indicator.SetActive(false);
             isGrabbable = false;
             Destroy(gameObject);
+        }
+
+        if (PlayerController.item[0] == "BlueKey" && PlayerController.isPressed)
+        {
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 1));
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 2));
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "•Escape the mansion", 2));
         }
     }
 }

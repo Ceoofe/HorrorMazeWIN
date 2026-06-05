@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Door : MonoBehaviour
 {
+    public GameObject escape;
     GameObject message;
     GameObject transition;
     GameObject plr;
@@ -42,6 +44,11 @@ public class Door : MonoBehaviour
 
         if (isTrigger && PlayerController.isPressed && PlayerController.item[0] == currentKey.ToString())
         {
+            if (PlayerController.item[0] == "BlueKey")
+            {
+
+                escape.SetActive(true);
+            }
             Debug.Log("Unlocked!");
             PlayerController.isPressed = false;
             isTrigger = false;

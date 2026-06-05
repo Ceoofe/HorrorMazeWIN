@@ -204,4 +204,9 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(3f, 2)); // Freeze player
         }
     }
+
+    public void End()
+    {
+        SceneManager.LoadScene(0);
+    }
 }

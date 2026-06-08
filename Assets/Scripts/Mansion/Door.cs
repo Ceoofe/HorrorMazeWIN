@@ -48,6 +48,7 @@ public class Door : MonoBehaviour
             {
 
                 escape.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
             }
             Debug.Log("Unlocked!");
             PlayerController.isPressed = false;

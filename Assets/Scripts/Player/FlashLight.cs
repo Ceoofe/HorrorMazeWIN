@@ -55,7 +55,7 @@ public class FlashLight : MonoBehaviour
         {
             if (!isDone) // The first Objective
             {
-                StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 2));
+                StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 2, false));
                 plrController.enabled = true;
                 isDone = true;
             }

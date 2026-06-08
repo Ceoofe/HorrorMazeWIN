@@ -37,9 +37,8 @@ public class Key : MonoBehaviour
 
         if (PlayerController.item[0] == "BlueKey" && PlayerController.isPressed)
         {
-            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 1));
-            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 2));
-            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "•Escape the mansion", 2));
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "•Escape the mansion", 1, true));
+
         }
     }
 }

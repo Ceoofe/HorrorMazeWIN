@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Objectives : MonoBehaviour
 {
-    public IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum) // Replace text
+    public IEnumerator NewObjective(TMP_Text oldText, string newObj, int objNum, bool remove) // Replace text
     {
         int index = oldText.text.LastIndexOf("\u2022"); // bullet point
 
@@ -32,7 +32,14 @@ public class Objectives : MonoBehaviour
 
             yield return new WaitForSeconds(2f);
 
-            oldText.text = newObj + "\n" + remain;
+            if (!remove)
+            {
+                oldText.text = newObj + "\n" + remain;
+            }
+            else
+            {
+                oldText.text = newObj;
+            }
         }
         else if (objNum == 2)
         {
@@ -56,4 +63,5 @@ public class Objectives : MonoBehaviour
             oldText.text = remain + newObj;
         }
     }
+
 }

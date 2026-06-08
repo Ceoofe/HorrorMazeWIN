@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Ground
   - Door
+  - Wood
+  - Hallway
+  - Basement
   layers:
   - Default
   - TransparentFX

@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Transition : MonoBehaviour
 {
-    PlayerController plrController;
     FlashLight flashLight;
     CameraMovement cam;
     MiniMenu mini;
@@ -14,7 +13,6 @@ public class Transition : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name != "Main Menu")
         {
-            plrController = GameObject.Find("Player").GetComponent<PlayerController>();
             flashLight = GameObject.Find("Player").GetComponent<FlashLight>();
             cam = GameObject.Find("Player/Main Camera").GetComponent<CameraMovement>();
             mini = GameObject.Find("Canvas").GetComponent<MiniMenu>();
@@ -30,7 +28,7 @@ public class Transition : MonoBehaviour
         flashLight.enabled = false;
         cam.enabled = false;
         mini.enabled = false;
-        plrController.enabled = false;
+        PlayerController.isFreezed = true;
         }
         yield return new WaitForSeconds(seconds);
         SceneManager.LoadScene(scene);
@@ -42,14 +40,14 @@ public class Transition : MonoBehaviour
         flashLight.enabled = false;
         cam.enabled = false;
         mini.enabled = false;
-        plrController.enabled = false;
+        PlayerController.isFreezed = true;
         PlayerController.item[0] = "e"; 
         yield return new WaitForSeconds(seconds);
         gameObject.SetActive(false);
         flashLight.enabled = true;
         cam.enabled = true;
         mini.enabled = true;
-        plrController.enabled = true;
+        PlayerController.isFreezed = false;
         plr.transform.position = pos;
         PlayerController.item[0] = "None";
     }

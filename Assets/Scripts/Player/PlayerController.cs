@@ -31,6 +31,10 @@ public class PlayerController : MonoBehaviour
 
     public static string[] item = new string[1];
 
+    public static bool isFreezed;
+    bool isOn;
+    bool isOnTwo;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -48,10 +52,16 @@ public class PlayerController : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "Game")
         {
             // Reset values
+            isFreezed = false;
             audioSources[1].Play();
             isCinemaMode = true;
             isSprinting = false;
             stamina = 100f;
+        }
+
+        if (SceneManager.GetActiveScene().name == "Mansion")
+        {
+            isFreezed = false;
         }
         item[0] = "None";
     }
@@ -59,6 +69,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isFreezed)
+        {
+            isSprinting = false; // resets sprinting
+            speed = 3;
+            return;
+        }
         SprintLogic();
         InteractionLogic();
         SkipCutScene();
@@ -66,6 +82,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isFreezed) return;
         if (!isCinemaMode)
         {
             Movement(); // Movement
@@ -77,7 +94,7 @@ public class PlayerController : MonoBehaviour
 
         if (other.name == "Trigger" && !check) // Changes objective
         {
-            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "• Enter the House", 1));
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "• Enter the House", 1, false));
             check = true;
         }
         if (other.name == "SecondTrigger" && check) // Player at the front door
@@ -89,6 +106,18 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Door"))
         {
             interactionUI.SetActive(true);
+        }
+
+
+        if (other.CompareTag("Hallway") && !isOn)
+        {
+            audioSources[0].PlayOneShot(clips[6]);
+            isOn = true;
+        }
+        else if (other.CompareTag("Basement") && !isOnTwo)
+        {
+            audioSources[0].PlayOneShot(clips[5]);
+            isOnTwo = true;
         }
     }
     void OnTriggerExit(Collider other)
@@ -141,8 +170,7 @@ public class PlayerController : MonoBehaviour
     }
     void SprintLogic()
     {
-
-        if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode) // Sprint WIP sprints when player isnt moving
+        if (Input.GetKey(KeyCode.LeftShift) && !isCinemaMode)
         {
             isSprinting = true;
             speed = 6;
@@ -200,7 +228,7 @@ public class PlayerController : MonoBehaviour
 
         if (isPressed && interactionUI.activeSelf && isNearMainDoor) // Teleports player inside the mansion
         {
-            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 1));
+            StartCoroutine(plrUI.transform.Find("ObjectiveUI").GetComponent<Objectives>().NewObjective(objectives, "", 1, false));
             StartCoroutine(transition.GetComponent<Transition>().LoadingScreen(3f, 2)); // Freeze player
         }
     }
